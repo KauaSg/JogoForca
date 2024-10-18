@@ -1,6 +1,23 @@
 #include <stdio.h>
 #include <string.h>
 
+void abertura() {
+    printf("********************\n");
+    printf("***Jogo da Forca****\n");
+    printf("********************\n");
+}
+
+int pegaChuteArmazenaChute(char letrasCertas[26], int tentativas){
+    char letraDigitada;
+    printf("Digite uma letra\n");
+    scanf(" %c", &letraDigitada);
+
+
+    // a lista lista certa receba a letra digitada exemplo digito m a listacerta recebe m no indice 0 porque e minha primeira tentativa
+    letrasCertas[tentativas] = letraDigitada;
+    tentativas++;
+}
+
 int main() {
     char palavraSecreta[20];
     sprintf(palavraSecreta, "MELANCIA");
@@ -12,17 +29,10 @@ int main() {
     char letrasCertas[26];
     int tentativas = 0;
 
-
+    abertura();
 
     while (!acertou  && !enforcou ){
-        char letraDigitada;
-        printf("Digite uma letra\n");
-        scanf(" %c", &letraDigitada);
-
-
-        // a lista lista certa receba a letra digitada exemplo digito m a listacerta recebe m no indice 0 porque e minha primeira tentativa
-        letrasCertas[tentativas] = letraDigitada;
-        tentativas++;
+        tentativas = pegaChuteArmazenaChute(letrasCertas, tentativas);
 
         for (int i = 0; i < tamanhoDaPalavra; i++){  
 
@@ -40,9 +50,16 @@ int main() {
                 printf("_ ");
             }    
         }
+        printf("%s", letrasCertas);
         printf("\n"); 
     }
     }
+    
+
+
+
+
+
 
     // palavraSecreta[0] = 'm';
     // palavraSecreta[1] = 'e';
