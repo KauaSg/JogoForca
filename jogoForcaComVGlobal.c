@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <string.h>
+#include "funcoes.h"
 
 char palavraSecreta[20];
 char letrasCertas[26];
@@ -10,6 +13,7 @@ void abertura() {
     printf("***Jogo da Forca****\n");
     printf("********************\n");
 }
+
 
 // o * antes da variavel indica que estou pegando o ponteiro ou o numero onde a memoria guardou a variavel tipo um 14225425486
 void pegaChuteArmazenaChute(){
@@ -22,6 +26,32 @@ void pegaChuteArmazenaChute(){
     // o * antes da variavel aqui eu ja estou modificando a variavel direto na memoria que peguei la em cima
     letrasCertas[tentativas] = letraDigitada;
     tentativas++;
+}
+
+void escolhePalavra(){
+    FILE* f;
+
+    f = fopen("/palavras.txt", "r");
+    if (f == NULL) {
+        printf("Erro ao abrir o arquivo!\n");
+        exit(1);
+    }
+
+    int qtddepalavras;
+    fscanf(f, "%d", &qtddepalavras);  // Lê o número de palavras
+
+    srand(time(0));  // Inicializa o gerador de números aleatórios
+    int randomico = rand() % qtddepalavras;  // Escolhe um índice aleatório
+
+    // Lê as palavras até encontrar a selecionada
+    for(int i = 0; i <= randomico; i++) {
+        fscanf(f, "%s", palavraSecreta);
+    }
+
+    fclose(f);  // Fecha o arquivo
+
+    // Depuração: imprime a palavra escolhida
+    printf("Palavra escolhida: %s\n", palavraSecreta);
 }
 
 int verificaSeLetraEstaNaLista(char palavraDaForca){
@@ -50,16 +80,40 @@ void desenhaForca(){
 }
 }
 
+int enforcou(){
+    int erros = 0;
+
+    for (int i = 0; i < tentativas; i++){
+        int letraExiste = 0;
+
+        for (int j = 0; j < strlen(palavraSecreta); j++){
+            if(letrasCertas[i] == palavraSecreta[j]){
+                letraExiste = 1;
+                break;
+            }
+        } 
+        if (!letraExiste){
+            erros++;
+        }    
+    }
+    return erros >= 5;
+}
+
+int acertou(){
+    for (int i = 0; i < strlen(palavraSecreta);i++){
+        if(!verificaSeLetraEstaNaLista(palavraSecreta[i])){
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int main() {
-    sprintf(palavraSecreta, "MELANCIA");
 
-    int acertou = 0;
-    int enforcou = 0;
-
-
+    escolhePalavra();
     abertura();
 
-    while (!acertou  && !enforcou ){
+    while (!acertou()  && !enforcou()){
         // o & indica que estou enviando o ponteiro ou o local de memoria onde tentativas esta
         pegaChuteArmazenaChute();
         desenhaForca();
