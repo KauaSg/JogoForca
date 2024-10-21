@@ -31,7 +31,7 @@ void pegaChuteArmazenaChute(){
 void escolhePalavra(){
     FILE* f;
 
-    f = fopen("/palavras.txt", "r");
+    f = fopen("../palavras.txt", "r");
     if (f == NULL) {
         printf("Erro ao abrir o arquivo!\n");
         exit(1);
