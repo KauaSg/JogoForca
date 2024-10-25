@@ -4,7 +4,7 @@
 #include <string.h>
 #include "funcoes.h"
 
-char palavraSecreta[20];
+char palavraSecreta[tamanhoPalavra];
 char letrasCertas[26];
 int tentativas = 0;
 
@@ -12,6 +12,43 @@ void abertura() {
     printf("********************\n");
     printf("***Jogo da Forca****\n");
     printf("********************\n");
+}
+
+void adicionapalavra(){
+
+    char quer;
+
+    printf("Voce deseja adicionar uma palavra(S//N)");
+    scanf(" %c", &quer);
+
+    if(quer == 'S'){
+
+        printf("Qual a nova palavra");
+        char novaPalavra[tamanhoPalavra];
+        scanf(" %s", &novaPalavra);
+
+        FILE* f;
+
+        f = fopen("../palavras.txt", "r+");
+
+        if (f == NULL) {
+            printf("Erro ao abrir o arquivo!\n");
+            exit(1);
+        }
+
+        int qtddepalavras;
+        fscanf(f, "%d", &qtddepalavras);  // Lê o número de palavras
+        qtddepalavras++;
+
+        fseek(f, 0, SEEK_SET);
+        fprintf(f, "%d", qtddepalavras);
+
+        fseek(f, 0, SEEK_END);
+        fprintf(f, "\n%s", novaPalavra);
+
+        fclose(f);
+    }
+
 }
 
 
@@ -69,18 +106,27 @@ int verificaSeLetraEstaNaLista(char palavraDaForca){
 
 //essa funçao coloca _ ou a letra caso seja a letra certa
 void desenhaForca(){
+
+    int erros = chuteserrados();
+
+    printf("  _______       \n");
+    printf(" |/      |      \n");
+    printf(" |      %c%c%c  \n", (erros>=1?'(':' '), (erros>=1?'_':' '), (erros>=1?')':' '));
+    printf(" |      %c%c%c  \n", (erros>=3?'\\':' '), (erros>=2?'|':' '), (erros>=3?'/': ' '));
+    printf(" |       %c     \n", (erros>=2?'|':' '));
+    printf(" |      %c %c   \n", (erros>=4?'/':' '), (erros>=4?'\\':' '));
+    printf(" |              \n");
+    printf("_|___           \n");
+    printf("\n\n");
+
     for (int i = 0; i < strlen(palavraSecreta); i++){  
         int achou = verificaSeLetraEstaNaLista(palavraSecreta[i]);
 
-        if(achou == 1){
-            printf("%c ", palavraSecreta[i]);
-        }else {
-            printf("_ ");
-        }    
-}
+        (achou == 1 ? printf("%c ", palavraSecreta[i]) : printf("_ ")) ;  
+    }
 }
 
-int enforcou(){
+int chuteserrados(){
     int erros = 0;
 
     for (int i = 0; i < tentativas; i++){
@@ -96,7 +142,13 @@ int enforcou(){
             erros++;
         }    
     }
-    return erros >= 5;
+
+    return erros;
+}
+
+int enforcou(){
+
+    return chuteserrados() >= 5;
 }
 
 int acertou(){
@@ -120,7 +172,13 @@ int main() {
         printf("%s", letrasCertas);
         printf("\n"); 
     }
+
+    (acertou() ? printf("Parabens voce ganhou\n") : printf("Infelizmente voce perdeu\n"));
+    
+
+    adicionapalavra();
 }
+
     
 
 
